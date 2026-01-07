@@ -1,7 +1,8 @@
-import scrapy
-from crawler.items import PokemonCard
 import random
 import time
+
+import scrapy
+from crawler.items import PokemonCard
 
 USER_AGENTS = [
     "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Mobile Safari/537.36",
@@ -13,24 +14,25 @@ USER_AGENTS = [
     "Mozila/5.0 (Linux; Android 14; SM-S928W) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.6099.230 Mobile Safari/537.36",
 ]
 
+
 class PokechartspiderSpider(scrapy.Spider):
     name = "pokechartspider"
     allowed_domains = ["pricecharting.com"]
-    
-    start_urls = [
-        "https://www.pricecharting.com/category/pokemon-cards"
-    ]
+
+    start_urls = ["https://www.pricecharting.com/category/pokemon-cards"]
 
     def start_requests(self):
         for url in self.start_urls:
             yield scrapy.Request(
-                    url, 
-                    callback=self.parse,
-                    headers={'User-Agent': random.choice(USER_AGENTS)}
+                url,
+                callback=self.parse,
+                headers={"User-Agent": random.choice(USER_AGENTS)},
             )
 
     def parse(self, response):
-        all_url_sets = response.xpath('//*[@id="home-page"]/div[4]/ul/li/a/@href').getall()
+        all_url_sets = response.xpath(
+            '//*[@id="home-page"]/div[4]/ul/li/a/@href'
+        ).getall()
 
         yield from response.follow_all(
             all_url_sets,
@@ -38,8 +40,10 @@ class PokechartspiderSpider(scrapy.Spider):
         )
 
     def parse_set(self, response):
-        urls = response.xpath('//tr[starts-with(@id, "product-")]/td[2]/a/@href').getall() 
-        
+        urls = response.xpath(
+            '//tr[starts-with(@id, "product-")]/td[2]/a/@href'
+        ).getall()
+
         yield from response.follow_all(
             urls,
             callback=self.parse_product,
@@ -49,11 +53,24 @@ class PokechartspiderSpider(scrapy.Spider):
         item = PokemonCard()
 
         item["pokemon"] = response.url.split("/")[-1]
-        item["raw"] = response.xpath('//td[@id="used_price"]/span[1]/text()').get().strip()
-        item["grade_7"] = response.xpath('//td[@id="complete_price"]/span[1]/text()').get().strip()
-        item["grade_8"] = response.xpath('//td[@id="new_price"]/span[1]/text()').get().strip()
-        item["grade_9"] = response.xpath('//td[@id="graded_price"]/span[1]/text()').get().strip()
-        item["grade_9_5"] = response.xpath('//td[@id="box_only_price"]/span[1]/text()').get().strip()
-        item["grade_10"] = response.xpath('//td[@id="manual_only_price"]/span[1]/text()').get().strip()
-
+        item["raw"] = (
+            response.xpath('//td[@id="used_price"]/span[1]/text()').get().strip()
+        )
+        item["grade_7"] = (
+            response.xpath('//td[@id="complete_price"]/span[1]/text()').get().strip()
+        )
+        item["grade_8"] = (
+            response.xpath('//td[@id="new_price"]/span[1]/text()').get().strip()
+        )
+        item["grade_9"] = (
+            response.xpath('//td[@id="graded_price"]/span[1]/text()').get().strip()
+        )
+        item["grade_9_5"] = (
+            response.xpath('//td[@id="box_only_price"]/span[1]/text()').get().strip()
+        )
+        item["grade_10"] = (
+            response.xpath('//td[@id="manual_only_price"]/span[1]/text()').get().strip()
+        )
+        item["timestamp"] = int(time.time())
+        
         yield item

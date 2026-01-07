@@ -1,8 +1,3 @@
-# Define here the models for your scraped items
-#
-# See documentation in:
-# https://docs.scrapy.org/en/latest/topics/items.html
-
 import scrapy
 
 
@@ -15,3 +10,4 @@ class PokemonCard(scrapy.Item):
     grade_9 = scrapy.Field()
     grade_9_5 = scrapy.Field()
     grade_10 = scrapy.Field()
+    timestamp = scrapy.Field()
