@@ -7,6 +7,7 @@ create table raw_card_prices  (
     card_id serial primary key,
     card_name text,
     set_name text,
+    raw_price real,
     grade7_price real,
     grade8_price real,
     grade9_price real,
