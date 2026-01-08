@@ -7,11 +7,11 @@ create table raw_card_prices  (
     card_id serial primary key,
     card_name text,
     set_name text,
-    grade7_price text,
-    grade8_price text,
-    grade9_price text,
-    grade9_5_price text,
-    grade10_price text,
+    grade7_price real,
+    grade8_price real,
+    grade9_price real,
+    grade9_5_price real,
+    grade10_price real,
     scraped_at timestamp,
     ingested_at timestamp default now()
 );

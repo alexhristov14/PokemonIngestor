@@ -1,11 +1,7 @@
-# Scrapy settings for crawler project
-#
-# For simplicity, this file contains only settings considered important or
-# commonly used. You can find more settings consulting the documentation:
-#
-#     https://docs.scrapy.org/en/latest/topics/settings.html
-#     https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
-#     https://docs.scrapy.org/en/latest/topics/spider-middleware.html
+import os
+
+DATABASE_URL = os.getenv("DATABASE_URL")
+ELASTICSEARCH_URL = os.getenv("ELASTICSEARCH_URL")
 
 BOT_NAME = "crawler"
 
@@ -58,9 +54,9 @@ DOWNLOAD_DELAY = 1
 
 # Configure item pipelines
 # See https://docs.scrapy.org/en/latest/topics/item-pipeline.html
-# ITEM_PIPELINES = {
-#    "crawler.pipelines.CrawlerPipeline": 300,
-# }
+ITEM_PIPELINES = {
+    "crawler.pipelines.PostgresPipeline": 300,
+}
 
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See https://docs.scrapy.org/en/latest/topics/autothrottle.html

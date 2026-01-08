@@ -34,6 +34,8 @@ def main():
             "grade_8": "grade8_price",
             "grade_9": "grade9_price",
             "grade_9_5": "grade9_5_price",
+            "grade_10": "grade10_price",
+            "timestamp": "scraped_at",
         }
     )
     df["ingested_at"] = datetime.utcnow()

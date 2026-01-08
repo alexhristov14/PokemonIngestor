@@ -1,5 +1,5 @@
 import random
-import time
+from datetime import datetime
 
 import scrapy
 from crawler.items import PokemonCard
@@ -57,20 +57,26 @@ class PokechartspiderSpider(scrapy.Spider):
             response.xpath('//td[@id="used_price"]/span[1]/text()').get().strip()
         )
         item["grade_7"] = (
-            response.xpath('//td[@id="complete_price"]/span[1]/text()').get().strip()
+            response.xpath('//td[@id="complete_price"]/span[1]/text()')
+            .get()
+            .strip()[1:]
         )
         item["grade_8"] = (
-            response.xpath('//td[@id="new_price"]/span[1]/text()').get().strip()
+            response.xpath('//td[@id="new_price"]/span[1]/text()').get().strip()[1:]
         )
         item["grade_9"] = (
-            response.xpath('//td[@id="graded_price"]/span[1]/text()').get().strip()
+            response.xpath('//td[@id="graded_price"]/span[1]/text()').get().strip()[1:]
         )
         item["grade_9_5"] = (
-            response.xpath('//td[@id="box_only_price"]/span[1]/text()').get().strip()
+            response.xpath('//td[@id="box_only_price"]/span[1]/text()')
+            .get()
+            .strip()[1:]
         )
         item["grade_10"] = (
-            response.xpath('//td[@id="manual_only_price"]/span[1]/text()').get().strip()
+            response.xpath('//td[@id="manual_only_price"]/span[1]/text()')
+            .get()
+            .strip()[1:]
         )
-        item["timestamp"] = int(time.time())
+        item["timestamp"] = datetime.utcnow()
 
         yield item
