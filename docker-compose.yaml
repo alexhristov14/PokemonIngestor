@@ -32,7 +32,7 @@ services:
       retries: 5
   
   crawler:
-    build: ./crawler
+    build: ./app/crawler
     container_name: scrapy_crawler
     depends_on:
       - postgres
@@ -41,12 +41,12 @@ services:
       DATABASE_URL: postgresql://admin:admin@postgres:5432/app_db
       ELASTICSEARCH_URL: http://elasticsearch:9200
     volumes:
-      - ./crawler:/app
+      - ./app/crawler:/app
     working_dir: /app
     entrypoint: ["tail", "-f", "/dev/null"]
   
   api:
-    build: ./backend
+    build: ./app/backend
     container_name: api_backend
     depends_on:
       - postgres
@@ -55,14 +55,14 @@ services:
       DATABASE_URL: postgresql://admin:admin@postgres:5432/app_db
       ELASTICSEARCH_URL: http://elasticsearch:9200
     volumes:
-      - ./backend:/app
+      - ./app/backend:/app
     working_dir: /app
     ports:
       - "8000:8000"
     command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
 
   python-runner:
-    build: ./backend
+    build: ./app/backend
     container_name: python_runner
     depends_on:
       - postgres

@@ -30,7 +30,7 @@ def chunked(iterable, size):
         yield iterable[i : i + size]
 
 
-def main():
+def ingest_raw():
     df = pd.read_csv(DATA_PATH)
 
     df = df.rename(
@@ -52,6 +52,14 @@ def main():
     with engine.begin() as conn:
         for batch in chunked(records, BATCH_SIZE):
             conn.execute(raw_cards.insert(), batch)
+
+
+def ingest_historical():
+    pass
+
+
+def main():
+    ingest_raw()
 
 
 if __name__ == "__main__":

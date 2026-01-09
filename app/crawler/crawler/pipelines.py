@@ -16,12 +16,12 @@ class PostgresPipeline:
 
     def process_item(self, item, spider):
         def parse_price(value):
-            if value in (None, ""):
+            if value in (None, "", "-"):
                 return None
             if "," in value:
-                value.replace(",", "")
+                value = value.replace(",", "")
             if "$" in value:
-                value.replace("$", "")
+                value = value.replace("$", "")
             return float(value)
 
         query = text(

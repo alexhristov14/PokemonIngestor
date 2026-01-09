@@ -1,9 +1,8 @@
 import os
 from datetime import datetime
 
-from airflow.providers.docker.operators.docker import DockerOperator
-
 from airflow import DAG
+from airflow.providers.docker.operators.docker import DockerOperator
 
 DATABASE_URL = os.getenv("DATABASE_URL")
 ELASTICSEARCH_URL = os.getenv("ELASTICSEARCH_URL")

@@ -1,9 +1,8 @@
 from sqlalchemy import (Column, DateTime, Float, ForeignKey, Integer, String,
-                        func, null)
-from sqlalchemy.ext.declarative import declarative_base
+                        func)
 from sqlalchemy.orm import relationship
 
-Base = declarative_base()
+from .db import Base
 
 
 class RawCardPrice(Base):
