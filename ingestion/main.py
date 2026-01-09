@@ -10,10 +10,17 @@ BATCH_SIZE = 1000
 
 engine = create_engine(DATABASE_URL)
 
-metadata = MetaData()
+raw_metadata = MetaData()
 raw_cards = Table(
     "raw_card_prices",
-    metadata,
+    raw_metadata,
+    autoload_with=engine,
+)
+
+processed_metadata = Metadata()
+processed_cards = Table(
+    "processed_card_prices",
+    processed_metadata,
     autoload_with=engine,
 )
 
