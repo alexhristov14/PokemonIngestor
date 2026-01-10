@@ -42,15 +42,37 @@ services:
     ports:
       - "5601:5601"
 
+  cassandra:
+    image: cassandra:5.0
+    container_name: cassandra
+    environment:
+      CASSANDRA_CLUSTER_NAME: "dev-cluster"
+      CASSANDRA_DC: "datacenter1"
+      CASSANDRA_RACK: "rack1"
+      CASSANDRA_ENDPOINT_SNITCH: GossipingPropertyFileSnitch
+      MAX_HEAP_SIZE: 512M
+      HEAP_NEWSIZE: 128M
+    ports:
+      - "9042:9042"
+    volumes:
+      - cassandra_data:/var/lib/cassandra
+    healthcheck:
+      test: ["CMD-SHELL", "cqlsh localhost 9042 -e 'DESCRIBE KEYSPACES'"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
   crawler:
     build: ./app/crawler
     container_name: scrapy_crawler
     depends_on:
       - postgres
       - elasticsearch
+      - cassandra
     environment:
       DATABASE_URL: postgresql://admin:admin@postgres:5432/app_db
       ELASTICSEARCH_URL: http://elasticsearch:9200
+      CASSANDRA_URL: http://cassandra:9042
     volumes:
       - ./app/crawler:/app
     working_dir: /app
@@ -65,6 +87,7 @@ services:
     environment:
       DATABASE_URL: postgresql://admin:admin@postgres:5432/app_db
       ELASTICSEARCH_URL: http://elasticsearch:9200
+      CASSANDRA_URL: http://cassandra:9042
     volumes:
       - ./app/backend:/app
     working_dir: /app
@@ -81,6 +104,7 @@ services:
     environment:
       DATABASE_URL: postgresql://admin:admin@postgres:5432/app_db
       ELASTICSEARCH_URL: http://elasticsearch:9200
+      CASSANDRA_URL: http://cassandra:9042
     volumes:
       - ./:/app
     working_dir: /app
@@ -89,3 +113,4 @@ services:
 volumes:
   postgres_data:
   es_data:
+  cassandra_data:

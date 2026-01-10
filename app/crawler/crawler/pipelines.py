@@ -49,3 +49,7 @@ class PostgresPipeline:
             )
 
         return item
+
+
+class CassandraPipeline:
+    pass
