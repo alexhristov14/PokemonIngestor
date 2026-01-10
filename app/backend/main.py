@@ -67,9 +67,6 @@ TABLES = {
 }
 
 
-# -----------------------------
-# Functions
-# -----------------------------
 def create_all_tables() -> None:
     """Create all tables in the database."""
     try:
