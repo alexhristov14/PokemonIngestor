@@ -1,6 +1,8 @@
 import os
-from datetime import datetime
+from datetime import date, datetime
 
+from cassandra.auth import PlainTextAuthenticator
+from cassandra.cluster import Cluster
 from sqlalchemy import create_engine, text
 
 
@@ -52,4 +54,29 @@ class PostgresPipeline:
 
 
 class CassandraPipeline:
-    pass
+
+    def open_spider(self, spider):
+        HOSTS = ["cassandra"]
+        KEYSPACE = "pokemon"
+
+        try:
+            self.cluster = Cluster(contact_points=HOSTS, port=9042)
+
+            self.session = self.cluster.connect(keyspace=KEYSPACE)
+
+            print("Successfully connected to Cassandra")
+        except Exception as e:
+            print(f"Cassandra connection error: {e}")
+
+    def close_spider(self, spider):
+        self.cluster.shutdown()
+
+    def process_item(self, item, spider):
+        self.insert_stmt = session.prepare(
+            """
+            INSERT INTO card_price_history (
+                card_id, bucket_date, ts, price, source
+            )
+            VALUES (?, ?, ?, ?, ?)
+        """
+        )
