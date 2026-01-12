@@ -1,7 +1,8 @@
 from charmander.healthcheck import (check_cassandra, check_elasticsearch,
                                     check_postgres, check_postgres_table)
 from fastapi import FastAPI
-from oricario.init_db import init_db
+from lugia.utils import init_db as cassandra_init_db
+from oricario.init_db import init_db as postgres_init_db
 
 app = FastAPI()
 
@@ -17,7 +18,8 @@ def health_check():
 
 @app.get("/create_tables")
 def create_tables():
-    init_db()
+    postgres_init_db()
+    cassandra_init_db()
     return {"status": "tables created"}
 
 

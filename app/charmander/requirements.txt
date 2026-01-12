@@ -5,3 +5,4 @@ sqlalchemy
 elasticsearch
 pandas
 cassandra-driver
+tcgdex-sdk

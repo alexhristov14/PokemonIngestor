@@ -6,6 +6,16 @@ from cassandra.cluster import Cluster
 from sqlalchemy import create_engine, text
 
 
+def parse_price(value):
+    if value in (None, "", "-"):
+        return None
+    if "," in value:
+        value = value.replace(",", "")
+    if "$" in value:
+        value = value.replace("$", "")
+    return float(value)
+
+
 class PostgresPipeline:
     def open_spider(self, spider):
         db_url = os.getenv("DATABASE_URL")
@@ -17,14 +27,6 @@ class PostgresPipeline:
         self.engine.dispose()
 
     def process_item(self, item, spider):
-        def parse_price(value):
-            if value in (None, "", "-"):
-                return None
-            if "," in value:
-                value = value.replace(",", "")
-            if "$" in value:
-                value = value.replace("$", "")
-            return float(value)
 
         query = text(
             """
@@ -58,22 +60,19 @@ class CassandraPipeline:
         HOSTS = ["cassandra"]
         KEYSPACE = "pokemon"
 
-        try:
-            self.cluster = Cluster(HOSTS, port=9042)
-            self.session = self.cluster.connect(keyspace=KEYSPACE)
+        self.cluster = Cluster(HOSTS, port=9042)
+        self.session = self.cluster.connect(keyspace=KEYSPACE)
 
-            self.insert_stmt = self.session.prepare(
-                """
-                INSERT INTO card_price_history (
-                    card_id, bucket_date, ts, price, source
-                )
-                VALUES (?, ?, ?, ?, ?)
+        self.insert_stmt = self.session.prepare(
             """
+            INSERT INTO card_price_history (
+                card_id, date, price, source
             )
+            VALUES (?, ?, ?, ?)
+            """
+        )
 
-            print("Successfully connected to Cassandra")
-        except Exception as e:
-            print(f"Cassandra connection error: {e}")
+        print("Successfully connected to Cassandra")
 
     def close_spider(self, spider):
         if hasattr(self, "cluster"):
@@ -85,9 +84,9 @@ class CassandraPipeline:
         if isinstance(ts, str):
             ts = datetime.fromisoformat(ts)
 
-        bucket_date = ts.date()
+        # bucket_date = ts.date()
 
         self.session.execute(
             self.insert_stmt,
-            (item["pokemon"], bucket_date, ts, float(item["raw"]), "ebay"),
+            (item["pokemon"], ts, parse_price(item.get("raw")), "ebay"),
         )
