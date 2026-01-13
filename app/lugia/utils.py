@@ -1,7 +1,11 @@
 from cassandra.auth import PlainTextAuthProvider
 from cassandra.cluster import Cluster, NoHostAvailable
 
-CASSANDRA_HOSTS = ["cassandra"]
+CASSANDRA_HOSTS = [
+    "pokemoningestor-cassandra-1",
+    "pokemoningestor-cassandra-2",
+    "pokemoningestor-cassandra-3",
+]
 KEYSPACE = "pokemon"
 
 cluster = Cluster(CASSANDRA_HOSTS, port=9042)

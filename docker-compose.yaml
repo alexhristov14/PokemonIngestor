@@ -52,6 +52,8 @@ services:
       CASSANDRA_SEEDS: "pokemoningestor-cassandra-1"
       MAX_HEAP_SIZE: 512M
       HEAP_NEWSIZE: 128M
+    volumes:
+      - /var/lib/cassandra
     healthcheck:
       test: ["CMD-SHELL", "cqlsh -e 'describe keyspaces' || exit 1"]
       interval: 30s
@@ -80,7 +82,8 @@ services:
     environment:
       DATABASE_URL: postgresql://admin:admin@postgres:5432/app_db
       ELASTICSEARCH_URL: http://elasticsearch:9200
-      CASSANDRA_URL: http://cassandra:9042
+      CASSANDRA_HOSTS: pokemoningestor-cassandra-1,pokemoningestor-cassandra-2,pokemoningestor-cassandra-3
+      CASSANDRA_PORT: 9042
     volumes:
       - ./app/gengar:/app
     working_dir: /app

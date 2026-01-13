@@ -58,7 +58,11 @@ class PostgresPipeline:
 
 class CassandraPipeline:
     def open_spider(self, spider):
-        HOSTS = ["cassandra"]
+        HOSTS = [
+            "pokemoningestor-cassandra-1",
+            "pokemoningestor-cassandra-2",
+            "pokemoningestor-cassandra-3",
+        ]
         KEYSPACE = "pokemon"
 
         self.cluster = Cluster(HOSTS, port=9042)
