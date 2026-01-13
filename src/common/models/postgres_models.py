@@ -1,5 +1,5 @@
 from sqlalchemy import Boolean, Column, DateTime, Float, ForeignKey, Integer, String, func
-from sqlalchemy.dialects.postgres import JSONB
+from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import relationship
 
 from common.database.postgres import Base
@@ -23,15 +23,18 @@ class RawCardPrice(Base):
 class CardMetadata(Base):
     __tablename__ = "card_metadata"
 
-    id = Column(String, primary_key=True)
-    card_id = Column(ForeignKey("raw_card_prices.id"), nullable=False)
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    card_id = Column(String, nullable=True)
+    # card_id = Column(ForeignKey("raw_card_prices.id"), nullable=True)
     card_name = Column(String, nullable=True)
     set_name = Column(String, nullable=True)
-    pokemon_type = Column(String, nullable=True)
+    num_in_set = Column(Integer, nullable=True)
+    evolve_from = Column(String, nullable=True)
+    description = Column(String, nullable=True)
+    image = Column(String, nullable=True)
     rarity = Column(String, nullable=True)
     illustrator = Column(String, nullable=True)
     series = Column(String, nullable=True)
-    numbers_in_set = Column(Integer, nullable=True)
     reverse = Column(Boolean, nullable=True)
     holo = Column(Boolean, nullable=True)
     first_edition = Column(Boolean, nullable=True)
@@ -49,4 +52,4 @@ class CardStatistics(Base):
     grade9_5_stats = Column(JSONB, default=dict, nullable=False)
     grade10_stats = Column(JSONB, default=dict, nullable=False)
 
-    price = relationship("RawCardPrice", back_populates="statistics")
+    # price = relationship("RawCardPrice", back_populates="statistics")
