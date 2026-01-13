@@ -45,15 +45,15 @@ services:
   cassandra:
     image: cassandra:5.0
     environment:
-      CASSANDRA_CLUSTER_NAME: "dev-cluster"
-      CASSANDRA_DC: "datacenter1"
-      CASSANDRA_RACK: "rack1"
+      CASSANDRA_CLUSTER_NAME: dev-cluster
+      CASSANDRA_DC: datacenter1
+      CASSANDRA_RACK: rack1
       CASSANDRA_ENDPOINT_SNITCH: GossipingPropertyFileSnitch
-      CASSANDRA_SEEDS: "pokemoningestor-cassandra-1"
+      CASSANDRA_SEEDS: cassandra
       MAX_HEAP_SIZE: 512M
       HEAP_NEWSIZE: 128M
     volumes:
-      - /var/lib/cassandra
+      - cassandra_data:/var/lib/cassandra
     healthcheck:
       test: ["CMD-SHELL", "cqlsh -e 'describe keyspaces' || exit 1"]
       interval: 30s
@@ -64,16 +64,17 @@ services:
     image: cassandra:5.0
     depends_on:
       cassandra:
-        condition: "service_healthy"
+        condition: service_healthy
+    restart: on-failure
     entrypoint: >
       bash -c "
-      cqlsh pokemoningestor-cassandra-1 -e 
-      \"create keyspace if not exists pokemon
-        with replication = {'class': 'SimpleStrategy', 'replication_factor': 3};\"
+      cqlsh cassandra -e
+      \"CREATE KEYSPACE IF NOT EXISTS pokemon
+      WITH replication = {'class': 'SimpleStrategy', 'replication_factor': 1};\"
       "
   
   crawler:
-    build: ./app/gengar
+    build: ./src/scraper
     container_name: scrapy_crawler
     depends_on:
       - postgres
@@ -82,15 +83,18 @@ services:
     environment:
       DATABASE_URL: postgresql://admin:admin@postgres:5432/app_db
       ELASTICSEARCH_URL: http://elasticsearch:9200
-      CASSANDRA_HOSTS: pokemoningestor-cassandra-1,pokemoningestor-cassandra-2,pokemoningestor-cassandra-3
+      CASSANDRA_HOST: cassandra
       CASSANDRA_PORT: 9042
+      CASSANDRA_KEYSPACE: pokemon
     volumes:
-      - ./app/gengar:/app
-    working_dir: /app
+      - ./src/scraper:/app/scraper
+      - ./src/common:/app/common
+      - ./src/cli:/app/cli
+    working_dir: /app/scraper
     entrypoint: ["tail", "-f", "/dev/null"]
   
   api:
-    build: ./app/charmander
+    build: ./src/api
     container_name: api_backend
     depends_on:
       postgres:
@@ -105,14 +109,16 @@ services:
       CASSANDRA_HOSTS: pokemoningestor-cassandra-1,pokemoningestor-cassandra-2,pokemoningestor-cassandra-3
       CASSANDRA_PORT: 9042
     volumes:
-      - ./app:/app
-    working_dir: /app/charmander
+      - ./src/api:/app/api
+      - ./src/common:/app/common
+      - ./src/cli:/app/cli
+    working_dir: /app/api
     ports:
       - "8000:8000"
     command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
 
   python-runner:
-    build: ./app/charmander
+    build: ./src/api
     container_name: python_runner
     depends_on:
       - postgres
@@ -120,13 +126,16 @@ services:
     environment:
       DATABASE_URL: postgresql://admin:admin@postgres:5432/app_db
       ELASTICSEARCH_URL: http://elasticsearch:9200
-      CASSANDRA_HOSTS: pokemoningestor-cassandra-1,pokemoningestor-cassandra-2,pokemoningestor-cassandra-3
+      CASSANDRA_HOST: cassandra
       CASSANDRA_PORT: 9042
+      CASSANDRA_KEYSPACE: pokemon
+      PYTHONPATH: /app
     volumes:
-      - ./:/app
+      - ./src:/app
     working_dir: /app
     entrypoint: ["tail", "-f", "/dev/null"]
 
 volumes:
   postgres_data:
   es_data:
+  cassandra_data:

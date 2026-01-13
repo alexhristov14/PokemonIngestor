@@ -1,16 +1,18 @@
 import logging
 from typing import List
 
-from cassandra.cluster import Cluster, NoHostAvailable
-from oricario.db import engine
-from pikachu.utils import es
+from cassandra.cluster import Cluster
 from sqlalchemy import text
+
+from common.database.elasticsearch import es
+from common.database.postgres import engine
 
 LOG = logging.getLogger(__name__)
 LOG.setLevel(logging.INFO)
 
 
 def check_postgres() -> str:
+    """Check if Postgres is reachable."""
     try:
         with engine.connect() as conn:
             conn.execute(text("SELECT 1"))
@@ -43,6 +45,7 @@ def check_postgres_table(table_names: List[str]) -> dict:
 
 
 def check_elasticsearch() -> str:
+    """Check if Elasticsearch is reachable."""
     try:
         return es.info()["cluster_name"]
     except Exception as e:
@@ -50,6 +53,7 @@ def check_elasticsearch() -> str:
 
 
 def check_cassandra(host="cassandra", keyspace="pokemon") -> bool:
+    """Check if Cassandra is reachable."""
     try:
         cluster = Cluster([host])
         session = cluster.connect(keyspace)
@@ -57,5 +61,5 @@ def check_cassandra(host="cassandra", keyspace="pokemon") -> bool:
         cluster.shutdown()
         return True
     except Exception as e:
-        print("Cassandra health error:", e)
+        LOG.error(f"Cassandra health error: {e}")
         return False

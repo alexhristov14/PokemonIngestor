@@ -4,3 +4,5 @@ venv/
 .scrapy
 __pycache__/
 .env
+build/
+*.egg-info/

@@ -1,8 +1,7 @@
-from sqlalchemy import (Column, DateTime, Float, ForeignKey, Integer, String,
-                        func)
+from sqlalchemy import Column, DateTime, Float, ForeignKey, Integer, String, func
 from sqlalchemy.orm import relationship
 
-from .db import Base
+from common.database.postgres import Base
 
 
 class RawCardPrice(Base):
@@ -33,15 +32,3 @@ class CardMetadata(Base):
     series = Column(String, nullable=True)
     numbers_in_set = Column(Integer, nullable=True)
     release_date = Column(DateTime, nullable=True)
-
-
-class CardPriceHistory(Base):
-    __tablename__ = "card_price_history"
-
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    card_id = Column(Integer, ForeignKey("raw_card_prices.card_id"), nullable=False)
-    grade = Column(Integer, nullable=False)
-    price = Column(Float, nullable=False)
-    recorded_at = Column(DateTime, server_default=func.now(), nullable=False)
-
-    card = relationship("RawCardPrice", back_populates="history")

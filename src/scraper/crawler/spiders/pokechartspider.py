@@ -30,9 +30,7 @@ class PokechartspiderSpider(scrapy.Spider):
             )
 
     def parse(self, response):
-        all_url_sets = response.xpath(
-            '//*[@id="home-page"]/div[4]/ul/li/a/@href'
-        ).getall()
+        all_url_sets = response.xpath('//*[@id="home-page"]/div[4]/ul/li/a/@href').getall()
 
         yield from response.follow_all(
             all_url_sets,
@@ -40,9 +38,7 @@ class PokechartspiderSpider(scrapy.Spider):
         )
 
     def parse_set(self, response):
-        urls = response.xpath(
-            '//tr[starts-with(@id, "product-")]/td[2]/a/@href'
-        ).getall()
+        urls = response.xpath('//tr[starts-with(@id, "product-")]/td[2]/a/@href').getall()
 
         yield from response.follow_all(
             urls,

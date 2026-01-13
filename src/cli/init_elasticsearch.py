@@ -1,8 +1,9 @@
 import time
 
-from utils import INDEX_BODY, INDEX_NAME, MAX_RETRIES, es
+from src.common.database.elasticsearch import INDEX_BODY, INDEX_NAME, MAX_RETRIES, es
 
-if __name__ == "__main__":
+
+def init_db():
     for attempt in range(MAX_RETRIES):
         try:
             if es.ping():
@@ -27,3 +28,7 @@ if __name__ == "__main__":
     mapping = es.indices.get_mapping(index=INDEX_NAME)
     print("Current mapping for index:")
     print(mapping)
+
+
+if __name__ == "__main__":
+    init_db()

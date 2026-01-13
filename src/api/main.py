@@ -1,9 +1,14 @@
-from charmander.healthcheck import (check_cassandra, check_elasticsearch,
-                                    check_postgres, check_postgres_table)
 from fastapi import FastAPI
-from lugia.utils import init_db as cassandra_init_db
-from oricario.init_db import init_db as postgres_init_db
 from tcgdexsdk import TCGdex
+
+from api.healthcheck import (
+    check_cassandra,
+    check_elasticsearch,
+    check_postgres,
+    check_postgres_table,
+)
+from cli.init_cassandra import init_db as cassandra_init_db
+from cli.init_postgres import init_db as postgres_init_db
 
 app = FastAPI()
 tcgdex = TCGdex()
@@ -39,7 +44,7 @@ def create_cassandra_tables():
 
 @app.get("/create_postgres_tables")
 def create_postgres_tables():
-    postgres_init_db_init_db()
+    postgres_init_db()
     return {"status": "tables created"}
 
 
