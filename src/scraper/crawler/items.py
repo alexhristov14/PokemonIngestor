@@ -11,3 +11,4 @@ class PokemonCard(scrapy.Item):
     grade_9_5 = scrapy.Field()
     grade_10 = scrapy.Field()
     timestamp = scrapy.Field()
+    set_name = scrapy.Field()

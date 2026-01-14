@@ -9,6 +9,7 @@ class RawCardPrice(Base):
     __tablename__ = "raw_card_prices"
 
     id = Column(Integer, primary_key=True, autoincrement=True)
+    set_name = Column(String, nullable=False)
     card_name = Column(String, nullable=False)
     raw_price = Column(Float, nullable=True)
     grade7_price = Column(Float, nullable=True)

@@ -31,18 +31,24 @@ class PokechartspiderSpider(scrapy.Spider):
 
     def parse(self, response):
         all_url_sets = response.xpath('//*[@id="home-page"]/div[4]/ul/li/a/@href').getall()
+        all_set_names = response.xpath('//*[@id="home-page"]/div[4]/ul/li/a/text()').getall()
 
-        yield from response.follow_all(
-            all_url_sets,
-            callback=self.parse_set,
-        )
+        for url, set_name in zip(all_url_sets, all_set_names):
+            yield response.follow(
+                url,
+                callback=self.parse_set,
+                meta={"set_name": set_name},
+            )
 
     def parse_set(self, response):
+        set_name = response.meta["set_name"]
+
         urls = response.xpath('//tr[starts-with(@id, "product-")]/td[2]/a/@href').getall()
 
         yield from response.follow_all(
             urls,
             callback=self.parse_product,
+            meta={"set_name": set_name},
         )
 
     def parse_product(self, response):
@@ -69,5 +75,7 @@ class PokechartspiderSpider(scrapy.Spider):
         item["grade_10"] = grade_10.strip()[1:] if grade_10 else None
 
         item["timestamp"] = datetime.utcnow()
+
+        item["set_name"] = response.meta["set_name"]
 
         yield item

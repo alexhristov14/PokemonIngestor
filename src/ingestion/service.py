@@ -35,7 +35,7 @@ def populate_metadata_service(
                     evolve_from=card_details.get("evolveFrom", None),
                     description=card_details.get("description", None),
                     image=card_details.get("image"),
-                    set_name=card.get("set", {}).get("name"),
+                    set_name=card.get("set", {}).get("id"),
                     rarity=card_details.get("rarity"),
                     illustrator=card_details.get("illustrator"),
                     series=card.get("set", {}).get("series"),

@@ -32,9 +32,9 @@ class PostgresPipeline:
         query = text(
             """
             INSERT INTO raw_card_prices
-            (card_name, raw_price, grade7_price, grade8_price, grade9_price, grade9_5_price, grade10_price, scraped_at)
+            (card_name, set_name, raw_price, grade7_price, grade8_price, grade9_price, grade9_5_price, grade10_price, scraped_at)
             VALUES
-            (:card_name, :raw_price, :grade7_price, :grade8_price, :grade9_price, :grade9_5_price, :grade10_price, :scraped_at)
+            (:card_name, :set_name, :raw_price, :grade7_price, :grade8_price, :grade9_price, :grade9_5_price, :grade10_price, :scraped_at)
             """
         )
 
@@ -43,6 +43,7 @@ class PostgresPipeline:
                 query,
                 {
                     "card_name": item["pokemon"],
+                    "set_name": item["set_name"],
                     "raw_price": parse_price(item.get("raw")),
                     "grade7_price": parse_price(item.get("grade_7")),
                     "grade8_price": parse_price(item.get("grade_8")),
