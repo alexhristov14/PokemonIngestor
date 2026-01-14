@@ -22,9 +22,13 @@ if [ "${RUN_STARTUP_SCRIPTS:-true}" = "true" ]; then
 	done
 	
 	python3 cli/init_cassandra.py
-	
-	# todo: healthcheck elasticsearch
-	# python3 cli/init_elasticsearch.py
+
+	until python3 -c "from elasticsearch import Elasticsearch; import sys; es=Elasticsearch('$ELASTICSEARCH_URL'); sys.exit(0 if es.ping() else 1)"; do
+	  echo 'Waiting for Elasticsearch...'
+	  sleep 2
+	done
+
+	python3 cli/init_elasticsearch.py
 
 else
 	echo "[python_runner] skipping startup scripts"
