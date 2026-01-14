@@ -1,6 +1,6 @@
 import time
 
-from src.common.database.elasticsearch import INDEX_BODY, INDEX_NAME, MAX_RETRIES, es
+from common.database.elasticsearch import INDEX_BODY, INDEX_NAME, MAX_RETRIES, es
 
 
 def init_db():

@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+psycopg2-binary
+sqlalchemy
+elasticsearch
+pandas
+cassandra-driver
+tcgdex-sdk
+requests
