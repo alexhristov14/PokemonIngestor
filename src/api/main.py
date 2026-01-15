@@ -1,14 +1,14 @@
 from fastapi import FastAPI
 from tcgdexsdk import TCGdex
 
+from cli.init_cassandra import init_db as cassandra_init_db
+from cli.init_postgres import init_db as postgres_init_db
 from scripts.healthcheck import (
     check_cassandra,
     check_elasticsearch,
     check_postgres,
     check_postgres_table,
 )
-from cli.init_cassandra import init_db as cassandra_init_db
-from cli.init_postgres import init_db as postgres_init_db
 
 app = FastAPI()
 tcgdex = TCGdex()

@@ -112,6 +112,7 @@ services:
       - ./src/api:/app/api
       - ./src/common:/app/common
       - ./src/cli:/app/cli
+      - ./src/scripts:/app/scripts
     working_dir: /app/api
     ports:
       - "8000:8000"

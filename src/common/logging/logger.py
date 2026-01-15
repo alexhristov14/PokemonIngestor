@@ -3,7 +3,6 @@ import sys
 from logging.config import dictConfig
 from typing import Optional
 
-
 LOG_LEVEL = "INFO"
 SERVICE_NAME = "data-platform"
 
@@ -36,15 +35,8 @@ def setup_logging(
             "version": 1,
             "disable_existing_loggers": False,
             "formatters": {
-                "default": {
-                    "format": (
-                        "%(asctime)s | %(levelname)s | %(name)s | "
-                        "%(message)s"
-                    )
-                },
-                "json": {
-                    "()": "common.logging.json_formatter.JSONFormatter"
-                },
+                "default": {"format": ("%(asctime)s | %(levelname)s | %(name)s | " "%(message)s")},
+                "json": {"()": "common.logging.json_formatter.JSONFormatter"},
             },
             "handlers": handlers,
             "root": {
@@ -60,4 +52,3 @@ def setup_logging(
             },
         }
     )
-
