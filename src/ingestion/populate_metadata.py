@@ -2,6 +2,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from typing import Optional
 
 import requests as r
+from sqlalchemy import select
 
 from common.database.postgres import get_db_session
 from common.models.postgres_models import CardMetadata
@@ -61,7 +62,10 @@ def populate_metadata_service(
                 for future in as_completed(futures):
                     card_meta = future.result()
                     if card_meta:
-                        card_models.append(card_meta)
+                        if not session.execute(
+                            select(CardMetadata).where(CardMetadata.id == card_meta.id)
+                        ).scalar():
+                            card_models.append(card_meta)
 
                 session.add_all(card_models)
                 session.commit()
@@ -69,3 +73,7 @@ def populate_metadata_service(
                 page += 1
                 if until_page and page > until_page:
                     break
+
+
+if __name__ == "__main__":
+    populate_metadata_service()
