@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from tcgdexsdk import TCGdex
 
-from api.healthcheck import (
+from scripts.healthcheck import (
     check_cassandra,
     check_elasticsearch,
     check_postgres,
